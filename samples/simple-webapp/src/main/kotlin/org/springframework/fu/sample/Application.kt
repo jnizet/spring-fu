@@ -19,8 +19,10 @@ package org.springframework.fu.sample
 import org.springframework.fu.application
 
 import org.springframework.fu.module.data.mongodb.mongodb
+import org.springframework.fu.module.data.mongodb.coroutines.coroutines
 import org.springframework.fu.module.jackson.jackson
 import org.springframework.fu.module.mustache.mustache
+import org.springframework.fu.module.webflux.coroutines.routes
 import org.springframework.fu.module.webflux.netty.netty
 import org.springframework.fu.module.webflux.webflux
 
@@ -37,7 +39,9 @@ val app = application {
 		}
 	}
 	configuration(configuration)
-	mongodb()
+	mongodb {
+		coroutines()
+	}
 	if (env.activeProfiles.any { it.startsWith("foo") }) {
 
 	}

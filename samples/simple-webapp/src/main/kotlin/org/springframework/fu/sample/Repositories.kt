@@ -2,27 +2,31 @@ package org.springframework.fu.sample
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.readValue
+import kotlinx.coroutines.experimental.runBlocking
 import org.springframework.core.io.ClassPathResource
 import org.springframework.data.mongodb.core.*
-import org.springframework.data.mongodb.core.query.Query
+import org.springframework.fu.module.data.mongodb.coroutines.*
+import org.springframework.fu.module.data.mongodb.coroutines.data.mongodb.core.CoroutineMongoTemplate
 
-class UserRepository(private val template: ReactiveMongoTemplate,
+class UserRepository(private val template: CoroutineMongoTemplate,
 					 objectMapper: ObjectMapper) {
 
 	init {
 		val eventsResource = ClassPathResource("data/users.json")
 		val users: List<User> = objectMapper.readValue(eventsResource.inputStream)
-		users.forEach { save(it).subscribe() }
+		runBlocking {
+			users.forEach { save(it) }
+		}
 	}
 
-	fun count() = template.count<User>()
+	suspend fun count() = template.count<User>()
 
-	fun findAll() = template.find<User>(Query())
+	suspend fun findAll() = template.findAll<User>()
 
-	fun findOne(id: String) = template.findById<User>(id)
+	suspend fun findOne(id: String) = template.findById<User>(id)
 
-	fun deleteAll() = template.remove<User>()
+	suspend fun deleteAll() = template.remove<User>()
 
-	fun save(user: User) = template.save(user)
+	suspend fun save(user: User) = template.save(user)
 
 }
